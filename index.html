@@ -1,0 +1,82 @@
+<html>
+	</head>
+	<script type="text/javascript" src="jquery.min.js"></script>
+		<style>
+		</style>
+	</html>
+	<body>
+		<ul>
+			<li id="none">
+				<span class="hours"></span>
+				<span class="colon">:</span>
+				<span class="minutes"></span>
+				<span class="colon">:</span>
+				<span class="seconds"></span>
+			</li>
+			<li id="hours">
+				<span class="hours"></span>
+				<span class="pi">&pi;</span>
+				<span class="text">hours</span>
+				<span class="colon">:</span>
+				<span class="minutes"></span>
+				<span class="pi">&pi;</span>
+				<span class="colon">:</span>
+				<span class="seconds"></span>
+				<span class="pi">&pi;</span>
+			</li>
+			<li id="minutes">
+				<span class="minutes"></span>
+				<span class="pi">&pi;</span>
+				<span class="text">minutes</span>
+				<span class="colon">:</span>
+				<span class="seconds"></span>
+				<span class="pi">&pi;</span>
+			</li>
+			<li id="seconds">
+				<span class="seconds"></span>
+				<span class="pi">&pi;</span>
+				<span class="text">seconds</span>
+			</li>
+		</ul>
+		<script type="text/javascript">
+			var t, intervl, totaltime = 15 + (14 + 3 * 60) * 60;
+			document.addEventListener('DOMContentLoaded', function (argument) {
+				document.body.addEventListener('click', function () {
+					console.log('GO!');
+					t = new Date().getTime() / 1000;
+					intervl = setInterval(tick, 10);
+				});
+				display(totaltime);
+			});
+			function display(time) {
+				displayLine(time, 'none', 1, 1, 1);
+				displayLine(time, 'hours', Math.PI, Math.PI, Math.PI);
+				displayLine(time, 'minutes', undefined, Math.PI, Math.PI);
+				displayLine(time, 'seconds', undefined, undefined, Math.PI);
+			}
+			function displayLine(time, id, h, m, s) {
+				var el = $('#' + id);
+				if (h !== undefined) {
+					var hi = Math.floor(time / (60 * 60 * h));
+					time -= hi * (60 * 60 * h)
+					el.find('.hours').text(hi);
+				}
+				if (m !== undefined) {
+					var mi = Math.floor(time / (60 * m));
+					time -= mi * (60 * m)
+					el.find('.minutes').text(mi);
+				}
+				if (s !== undefined)
+					el.find('.seconds').text(Math.floor(time / s));
+			}
+			function tick() {
+				var timeleft = t - new Date().getTime() / 1000 + totaltime;
+				if (timeleft < 0) {
+					clearInterval(intervl);
+					timeleft = 0;
+				}
+				display(timeleft);
+			}
+		</script>
+	</body>
+</html>
