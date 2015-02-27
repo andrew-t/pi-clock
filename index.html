@@ -11,6 +11,10 @@
 				line-height: 50vh;
 				margin: 0;
 				padding: 0;
+				cursor: none;
+			}
+			.over {
+				color: red;
 			}
 			#unity {
 				font-size: 30vmin;
@@ -83,10 +87,11 @@
 			function tick() {
 				var timeleft = t - new Date().getTime() / 1000 + totaltime;
 				if (timeleft < 0) {
+					$('.blink').removeClass('blink');
+					$('body').addClass('over');
 					clearInterval(intervl);
 					timeleft = 0;
 				}
-				console.log(ts)
 				if (!--ts) {
 					ts = ti[tn];
 					tn = +!tn;
