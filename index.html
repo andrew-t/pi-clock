@@ -2,32 +2,62 @@
 	</head>
 	<script type="text/javascript" src="jquery.min.js"></script>
 		<style>
+			body {
+				background: black;
+				color: white;
+				text-align: center;
+				font-family: 'Gill Sans', sans;
+				/*font-weight: bold;*/
+				line-height: 50vh;
+				margin: 0;
+				padding: 0;
+			}
+			#unity {
+				font-size: 30vmin;
+			}
+			#pi {
+				font-size: 18vmin;
+			}
+			.hours, .minutes, .seconds {
+				display: inline-block;
+				width: 1.2em;
+			}
+			.pi {
+				font-family: 'Times New Roman', serif;
+				font-weight: normal;
+				font-style: italic;
+			}
+			.blink {
+				opacity: 0;
+			}
+			.colon {
+				transition: opacity 0.2s;
+			}
 		</style>
 	</html>
 	<body>
-		<ul>
-			<li id="unity">
-				<span class="hours"></span>
-				<span class="colon">:</span>
-				<span class="minutes"></span>
-				<span class="colon">:</span>
-				<span class="seconds"></span>
-			</li>
-			<li id="pi">
-				<span class="hours"></span>
-				<span class="pi">&pi;</span>
-				<span class="colon">:</span>
-				<span class="minutes"></span>
-				<span class="pi">&pi;</span>
-				<span class="colon">:</span>
-				<span class="seconds"></span>
-				<span class="pi">&pi;</span>
-			</li>
-		</ul>
+		<div id="unity">
+			<span class="hours"></span>
+			<span class="colon">:</span>
+			<span class="minutes"></span>
+			<span class="colon">:</span>
+			<span class="seconds"></span>
+		</div>
+		<div id="pi">
+			<span class="hours"></span>
+			<span class="pi">&pi;</span>
+			<span class="colon">:</span>
+			<span class="minutes"></span>
+			<span class="pi">&pi;</span>
+			<span class="colon">:</span>
+			<span class="seconds"></span>
+			<span class="pi">&pi;</span>
+		</div>
 		<script type="text/javascript">
 			var t, intervl, totaltime = 15 + (14 + 3 * 60) * 60;
 			document.addEventListener('DOMContentLoaded', function (argument) {
 				document.body.addEventListener('click', function () {
+					if (t) return;
 					console.log('GO!');
 					t = new Date().getTime() / 1000;
 					intervl = setInterval(tick, 10);
@@ -49,11 +79,18 @@
 				el.find('.minutes').text(i);
 				el.find('.seconds').text(Math.floor(time));
 			}
+			var ti = [50, 100], tn = 0, ts = ti;
 			function tick() {
 				var timeleft = t - new Date().getTime() / 1000 + totaltime;
 				if (timeleft < 0) {
 					clearInterval(intervl);
 					timeleft = 0;
+				}
+				console.log(ts)
+				if (!--ts) {
+					ts = ti[tn];
+					tn = +!tn;
+					$('.colon').toggleClass('blink');
 				}
 				display(timeleft);
 			}
