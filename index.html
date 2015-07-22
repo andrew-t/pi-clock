@@ -8,19 +8,25 @@
 				text-align: center;
 				font-family: 'Gill Sans', sans;
 				/*font-weight: bold;*/
-				line-height: 50vh;
+				line-height: 100vh;
 				margin: 0;
 				padding: 0;
 				cursor: none;
+				transition: background 300ms;
 			}
 			.over {
 				color: red;
 			}
 			#unity {
 				font-size: 25vmin;
+				transition: color 300ms;
 			}
-			#pi {
-				font-size: 16vmin;
+			body:not(.over) .warning {
+				color: red;
+			}
+			.over {
+				background: red;
+				color: white;
 			}
 			.hours, .minutes, .seconds {
 				display: inline-block;
@@ -41,47 +47,29 @@
 	</html>
 	<body>
 		<div id="unity">
-			<span class="hours"></span>
-			<span class="colon">:</span>
 			<span class="minutes"></span>
 			<span class="colon">:</span>
 			<span class="seconds"></span>
-		</div>
-		<div id="pi">
-			<span class="hours"></span>
-			<span class="pi">&pi;</span>
-			<span class="colon">:</span>
-			<span class="minutes"></span>
-			<span class="pi">&pi;</span>
-			<span class="colon">:</span>
-			<span class="seconds"></span>
-			<span class="pi">&pi;</span>
 		</div>
 		<script type="text/javascript">
-			var t, intervl, totaltime = 15 + (14 + 3 * 60) * 60;
-			document.addEventListener('DOMContentLoaded', function (argument) {
+			var t, totaltime = 15 ;//* 60;
+			document.addEventListener('DOMContentLoaded', function () {
 				document.body.addEventListener('click', function () {
 					if (t) return;
 					console.log('GO!');
 					t = new Date().getTime() / 1000;
-					intervl = setInterval(tick, 10);
+					setInterval(tick, 10);
 				});
 				display(totaltime);
 			});
 			function display(time) {
-				displayLine(time, 'unity', 1);
-				displayLine(time, 'pi', Math.PI);
-			}
-			function displayLine(time, id, f) {
-				var el = $('#' + id);
-				time /= f;
-				var i = Math.floor(time / (60 * 60));
-				time -= i * 60 * 60;
-				el.find('.hours').text(i);
+				var el = $('#unity');
 				i = Math.floor(time / 60);
+				if (i < 5)
+					el.addClass('warning');
 				time -= i * 60;
-				el.find('.minutes').text(i);
-				el.find('.seconds').text(Math.floor(time));
+				el.find('.minutes').text(i < 0 ? ~i ? i + 1 : '\u22120' : i);
+				el.find('.seconds').text(pad(Math.floor(i >= 0 ? time : (60 - time))));
 			}
 			var ti = [50, 100], tn = 0, ts = ti;
 			function tick() {
@@ -89,8 +77,6 @@
 				if (timeleft < 0) {
 					$('.blink').removeClass('blink');
 					$('body').addClass('over');
-					clearInterval(intervl);
-					timeleft = 0;
 				}
 				if (!--ts) {
 					ts = ti[tn];
@@ -98,6 +84,9 @@
 					$('.colon').toggleClass('blink');
 				}
 				display(timeleft);
+			}
+			function pad(n) {
+				return n < 10 ? '0' + n : n;
 			}
 		</script>
 	</body>
