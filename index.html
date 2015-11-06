@@ -1,6 +1,5 @@
 <html>
 	</head>
-	<script type="text/javascript" src="jquery.min.js"></script>
 		<style>
 			body {
 				background: black;
@@ -18,8 +17,11 @@
 				color: red;
 			}
 			#unity {
-				font-size: 25vmin;
+				font-size: 0;
 				transition: color 300ms;
+			}
+			#unity > * {
+				font-size: 50vmin;
 			}
 			body:not(.over) .warning {
 				color: red;
@@ -47,47 +49,66 @@
 	</html>
 	<body>
 		<div id="unity">
-			<span class="minutes"></span>
-			<span class="colon">:</span>
-			<span class="seconds"></span>
+			<span class="minutes" id="minutes"></span>
+			<span class="colon" id="colon">:</span>
+			<span class="seconds" id="seconds"></span>
 		</div>
 		<script type="text/javascript">
-			var t, totaltime = 15 ;//* 60;
+			var t, ti, totaltime = 3 * 60, fs = false;
 			document.addEventListener('DOMContentLoaded', function () {
 				document.body.addEventListener('click', function () {
-					if (t) return;
+					if (!fs) return;
+					if (t) return stop();
 					console.log('GO!');
 					t = new Date().getTime() / 1000;
-					setInterval(tick, 10);
+					ti = setInterval(tick, 10);
 				});
 				display(totaltime);
 			});
 			function display(time) {
-				var el = $('#unity');
+				var el = document.getElementById('unity');
 				i = Math.floor(time / 60);
-				if (i < 5)
-					el.addClass('warning');
+				if (i < 0)
+					el.classList.add('warning');
 				time -= i * 60;
-				el.find('.minutes').text(i < 0 ? ~i ? i + 1 : '\u22120' : i);
-				el.find('.seconds').text(pad(Math.floor(i >= 0 ? time : (60 - time))));
+				document.getElementById('minutes').innerHTML =
+					i < 0 ? ~i ? i + 1 : '\u22120' : i;
+				document.getElementById('seconds').innerHTML =
+					pad(Math.floor(i >= 0 ? time : (60 - time)));
 			}
-			var ti = [50, 100], tn = 0, ts = ti;
+			var tis = [50, 100], tn = 0, ts = tis[0];
 			function tick() {
 				var timeleft = t - new Date().getTime() / 1000 + totaltime;
-				if (timeleft < 0) {
-					$('.blink').removeClass('blink');
-					$('body').addClass('over');
-				}
+				if (timeleft < -60)
+					document.body.classList.add('over');
 				if (!--ts) {
-					ts = ti[tn];
+					ts = tis[tn];
 					tn = +!tn;
-					$('.colon').toggleClass('blink');
+					document.getElementById('colon').classList.toggle('blink');
 				}
 				display(timeleft);
 			}
 			function pad(n) {
 				return n < 10 ? '0' + n : n;
 			}
+			function stop() {
+				if (ti)
+					clearInterval(ti);
+				ti = null;
+				t = null;
+				display(totaltime);
+				document.getElementById('colon').classList.remove('blink');
+				document.getElementById('unity').classList.remove('warning');
+				document.body.classList.remove('over');
+			}
+			document.body.addEventListener("click", function() {
+				var d = document.documentElement;
+				setTimeout(function() {
+					fs = true;
+				}, 100);
+				(d.requestFullscreen || d.mozRequestFullScreen || d.webkitRequestFullscreen)
+					.call(d);
+			});
 		</script>
 	</body>
 </html>
